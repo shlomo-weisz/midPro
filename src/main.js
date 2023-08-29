@@ -1,9 +1,14 @@
-import './assets/main.css'
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import '../node_modules/bootstrap/dist/css/bootstrap.css'
-createApp(App).mount('#app')
+// import { createApp } from 'vue'
+// import App from './App.vue'
+// import '../node_modules/bootstrap/dist/css/bootstrap.css'
+// createApp(App).mount('#app')
+
+const fs = require('fs')
+
+let difference = []
+
+
 
 const shas = {
     sdarim: {
@@ -64,8 +69,21 @@ const shas = {
         47: { name: 'keritot', hebrewName: 'כריתות', seder: 5, perekim: 6, mishnayot: 43 },
         48: { name: 'meila', hebrewName: 'מעילה', seder: 5, perekim: 6, mishnayot: 38 },
         49: { name: 'tamid', hebrewName: 'תמיד', seder: 5, perekim: 7, mishnayot: 34 },
-        50: { name: 'midot', hebrewName: 'מידות', seder: 5, perekim: 5, mishnayot: 34 },
+        50: { name: 'middot', hebrewName: 'מידות', seder: 5, perekim: 5, mishnayot: 34 },
         51: { name: 'kinnim', hebrewName: 'קנים', seder: 5, perekim: 3, mishnayot: 15 },
+        52: { name: 'keilim', hebrewName: 'כלים', seder: 6, perekim: 30, mishnayot: 254 },
+        53: { name: 'ohalot', hebrewName: 'אהלות', seder: 6, perekim: 18, mishnayot: 134 },
+        54: { name: 'negaim', hebrewName: 'נגעים', seder: 6, perekim: 14, mishnayot: 115 },
+        55: { name: 'para', hebrewName: 'פרה', seder: 6, perekim: 12, mishnayot: 96 },
+        56: { name: 'taharot', hebrewName: 'טהרות', seder: 6, perekim: 10, mishnayot: 92 },
+        57: { name: 'mikvaot', hebrewName: 'מקואות', seder: 6, perekim: 10, mishnayot: 71 },
+        58: { name: 'nidda', hebrewName: 'נדה', seder: 6, perekim: 10, mishnayot: 79 },
+        59: { name: 'machshirin', hebrewName: 'מכשירין', seder: 6, perekim: 6, mishnayot: 54 },
+        60: { name: 'zavim', hebrewName: 'זבים', seder: 6, perekim: 5, mishnayot: 32 },
+        61: { name: 'tevulYom', hebrewName: 'טבול יום', seder: 6, perekim: 4, mishnayot: 26 },
+        62: { name: 'yadayim', hebrewName: 'ידיים', seder: 6, perekim: 4, mishnayot: 22 },
+        63: { name: 'oktzin', hebrewName: 'עוקצין', seder: 6, perekim: 3, mishnayot: 28 },
+
 
 
 
@@ -797,7 +815,7 @@ const mishnayot = {
         perek18: 10
     },
     54: {
-        name: 'nega\'im',
+        name: 'negaim',
         mishnayot: 115,
         perekim: 14,
         perek1: 6,
@@ -816,7 +834,7 @@ const mishnayot = {
         perek14: 13
     },
     55: {
-        name: 'parah',
+        name: 'para',
         mishnayot: 96,
         perekim: 12,
         perek1: 4,
@@ -956,3 +974,8 @@ const findIdOfMasechet = (masechet) => {
         }
     }
 }
+
+for (let i = 1; i <= 63; i++) {
+    difference.push(shas.massechtot[i].hebrewName)
+}
+fs.writeFileSync('difference.json', JSON.stringify(difference))
