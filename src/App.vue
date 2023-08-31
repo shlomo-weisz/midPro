@@ -36,8 +36,8 @@
 
     <div class="form-line">
       <label for="limit">הגבלת מספר המשניות לכל יום (אופציונלי)</label>
-      <select type="number" id="limit" v-model="limit">
-        <option value="" default>ללא הגבלה</option>
+      <select type="number" id="limit" :disabled="thereIsDuration" v-model="limit">
+        <option value="0" default>ללא הגבלה</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="5">5</option>
@@ -53,7 +53,7 @@
 
     <div class="form-line">
       <label for="duration">או בחר מספר ימים למחזור השינון</label>
-      <input type="number" id="duration" min="0" max="365" v-model="duration">
+      <input type="number" id="duration" min="0" max="365" :disabled="thereIsLimit" v-model="duration">
     </div>
 
 
@@ -94,8 +94,10 @@ export default {
     return {
       showTable: false,
       currentDate: '',
-      limit: '',
-      duration: '',
+      limit: 0,
+      thereIsLimit: false,
+      duration: "",
+      thereIsDuration: false,
       labelName: ':שם',
       daysAll: false,
       name: '',
@@ -125,6 +127,20 @@ export default {
         this.days = [true, true, true, true, true, true, true]
       } else {
         this.days = [false, false, false, false, false, false, false]
+      }
+    },
+    limit() {
+      if (parseInt(this.limit) > 0) {
+        this.thereIsLimit = true
+      } else {
+        this.thereIsLimit = false
+      }
+    },
+    duration() {
+      if (parseInt(this.duration) > 0) {
+        this.thereIsDuration = true
+      } else {
+        this.thereIsDuration = false
       }
     },
 
