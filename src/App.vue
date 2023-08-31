@@ -16,22 +16,38 @@
       <label for="date">ימי לימוד:</label>
     </div>
     <div class="form-line">
-      <label for="all">סמן הכול</label>
-      <input type="checkbox" id="all" value="all" v-model="daysAll">
-      <label for="sunday">א</label>
-      <input type="checkbox" id="sunday" value="א" v-model="days[0]">
-      <label for="monday">ב</label>
-      <input type="checkbox" id="monday" value="ב" v-model="days[1]">
-      <label for="tuesday">ג</label>
-      <input type="checkbox" id="tuesday" value="ג" v-model="days[2]">
-      <label for="wednesday">ד</label>
-      <input type="checkbox" id="wednesday" value="ד" v-model="days[3]">
-      <label for="thursday">ה</label>
-      <input type="checkbox" id="thursday" value="ה" v-model="days[4]">
-      <label for="friday">ו</label>
-      <input type="checkbox" id="friday" value="ו" v-model="days[5]">
-      <label for="saturday">ש</label>
-      <input type="checkbox" id="saturday" value="ש" v-model="days[6]">
+      <div class="days-box">
+        <label for="all"> {{ chooseAll }}</label>
+        <input type="checkbox" id="all" value="all" v-model="daysAll">
+      </div>
+      <div class="days-box">
+        <label for="sunday">א</label>
+        <input type="checkbox" id="sunday" value="א" v-model="days[0]">
+      </div>
+      <div class="days-box">
+        <label for="monday">ב</label>
+        <input type="checkbox" id="monday" value="ב" v-model="days[1]">
+      </div>
+      <div class="days-box">
+        <label for="tuesday">ג</label>
+        <input type="checkbox" id="tuesday" value="ג" v-model="days[2]">
+      </div>
+      <div class="days-box">
+        <label for="wednesday">ד</label>
+        <input type="checkbox" id="wednesday" value="ד" v-model="days[3]">
+      </div>
+      <div class="days-box">
+        <label for="thursday">ה</label>
+        <input type="checkbox" id="thursday" value="ה" v-model="days[4]">
+      </div>
+      <div class="days-box">
+        <label for="friday">ו</label>
+        <input type="checkbox" id="friday" value="ו" v-model="days[5]">
+      </div>
+      <div class="days-box">
+        <label for="saturday">ש</label>
+        <input type="checkbox" id="saturday" value="ש" v-model="days[6]">
+      </div>
     </div>
 
     <div class="form-line">
@@ -76,7 +92,8 @@
 
 
   </form>
-  <newTable v-if="showTable" :masechtot="selected" :date="date" :name="name" :days="days" :limit="limit"></newTable>
+  <newTable v-if="showTable" :masechtot="selected" :date="date" :name="name" :days="days" :limit="limit"
+    :duration="duration"></newTable>
 
   {{ selected }}
   {{ currentDate }}
@@ -100,6 +117,7 @@ export default {
       thereIsDuration: false,
       labelName: ':שם',
       daysAll: false,
+      chooseAll: ' :בחר הכול',
       name: '',
       date: '',
       days: [false, false, false, false, false, false, false],
@@ -124,9 +142,12 @@ export default {
   watch: {
     daysAll() {
       if (this.daysAll) {
-        this.days = [true, true, true, true, true, true, true]
+        this.days = [true, true, true, true, true, true, true],
+          this.chooseAll = 'בטל בחירת כולם'
+
       } else {
         this.days = [false, false, false, false, false, false, false]
+        this.chooseAll = ' :בחר הכול'
       }
     },
     limit() {
@@ -137,6 +158,10 @@ export default {
       }
     },
     duration() {
+      // if (parseInt(this.duration) === NaN) {
+      //   this.duration = 0
+      //   alert('יש להכניס מספר')
+      // }
       if (parseInt(this.duration) > 0) {
         this.thereIsDuration = true
       } else {
@@ -1157,5 +1182,15 @@ const getSumOfMishnayotInMasechtot = (massechtot) => {
   justify-content: center;
   align-items: center;
   margin-bottom: 10px;
+}
+.days-box {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 3px solid #ccc;
+  border-radius: 5px;
 }
 </style>

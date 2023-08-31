@@ -1,4 +1,6 @@
-<template></template>
+<template>
+    
+</template>
 
 <script>
 export default {
@@ -9,6 +11,7 @@ export default {
         name: String,
         days: Array,
         limit: Number,
+        duration: Number,
     },
     data() {
         return {
@@ -47,8 +50,10 @@ export default {
             return this.masechtotIds.length
         },
         daysNeeded() {
-            if (this.limit)
+            if (parseInt(this.limit) > 0)
                 return Math.ceil(this.SumOfMishnayot / this.limit)
+            else if (parseInt(this.duration) > 0)
+                return this.duration
             else
                 return 30
         },
