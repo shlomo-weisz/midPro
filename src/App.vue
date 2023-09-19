@@ -1,5 +1,7 @@
 <template>
-  <form action="">
+  <div class="main">
+  <div class="formDiv" v-show="!showTable">
+  <form action="" >
     <div class="form-line">
       <label for="name">{{ labelName }}</label>
       <input type="text" id="name" v-model="name">
@@ -84,8 +86,11 @@
 
 
   </form>
+  </div>
+  <button v-show="showTable" @click="showTable=!showTable">לעריכת המסלול</button>
   <newTable v-if="showTable" :masechtot="selected" :date="date" :name="name" :days="days" :limit="limit"
     :duration="duration"></newTable>
+  </div>
 </template>
 
 
@@ -203,4 +208,24 @@ export default {
   border: 3px solid #ccc;
   border-radius: 5px;
 }
+.formDiv {
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(177, 234, 238);
+  margin: 10px;
+  padding: 10px;
+  border: 9px solid #1b1313;
+  border-radius: 5px;
+}
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+}
+
 </style>

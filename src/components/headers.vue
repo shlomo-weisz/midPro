@@ -10,35 +10,64 @@
         <div class="second">
             <p>תכנית לימוד עבור מסכתות {{ masechtos }}</p>
             <p>בימים {{ days }}</p>
-            </div>
-            <div class="third">
-            <p>מתאריך {{ startDate }} עד {{ endDate }}</p>
-            <p>סה"כ {{ totalMishnayos }} משניות במשך  {{ totalDays }} ימי לימוד</p>
+        </div>
+        <div class="third">
+            <p>מתאריך {{ hestartDate }} עד {{ heendDate }}</p>
+            <p>סה"כ {{ totalMishnayos }} משניות במשך {{ totalDays }} ימי לימוד</p>
 
         </div>
 
     </div>
-
 </template>
 <script>
 export default {
-  name: 'header',
-  props: {
-    name: String,
-    currentDate: String,
-    startDate: String,
-    endDate: String,
-    totalDays: Number,
-    totalMishnayos: Number,
-    days: Array,
-    masechtos: Array,
-    
-  },
-  data () {
-    return {
-      
+    name: 'header',
+    props: {
+        name: String,
+        currentDate: String,
+        startDate: String,
+        endDate: String,
+        totalDays: Number,
+        totalMishnayos: Number,
+        days: Array,
+        masechtos: Array,
+
+    },
+    data() {
+        return {
+            hestartDate: "",
+            heendDate: "",
+
+        }
+    },
+    mounted() {
+        this.setHeDate();
+    },
+    methods: {
+        fixFormat(date) {
+            let dateStr = date.toLocaleDateString("en-GB");
+            let DataStr = `${dateStr[6]}${dateStr[7]}${dateStr[8]}${dateStr[9]}&gm=${dateStr[3]}${dateStr[4]}&gd=${dateStr[0]}${dateStr[1]}`;
+            return DataStr
+        },
+        async getDateHE(date) {
+            let datehe = this.fixFormat(date);
+            let url = `https://www.hebcal.com/converter?cfg=json&gy=${datehe}&g2h=1`;
+            let response = await fetch(url);
+            let data = await response.json();
+            let hebDate = data.hebrew;
+            console.log(hebDate + " from getDateHE");
+            return hebDate
+        },
+        async setHeDate() {
+            let hebDate = await this.getDateHE(this.startDate);
+            this.hestartDate = hebDate;
+            console.log(this.startDate + " from setHeDate");
+            hebDate = await this.getDateHE(this.endDate);
+            this.heendDate = hebDate;
+            console.log(this.endDate + " from setHeDate");
+        },
+
     }
-  }
 }
 </script>
 <style scoped>
@@ -60,6 +89,7 @@ export default {
     text-align: center;
     color: #000000;
 }
+
 .firstLine {
     display: flex;
     flex-direction: row-reverse;
@@ -73,6 +103,7 @@ export default {
     text-align: center;
     color: #000000;
 }
+
 .second {
     display: flex;
     flex-direction: row-reverse;
@@ -87,6 +118,7 @@ export default {
     text-align: center;
     color: #000000;
 }
+
 .third {
     display: flex;
     flex-direction: row-reverse;

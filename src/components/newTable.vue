@@ -1,36 +1,15 @@
 <template>
+    <div>
     <headers 
     :name="name" 
     :currentDate="dateTodayHE" 
-    :startDate="hePlan[0]" 
-    :endDate="hePlan[hePlan.length - 1]"
+    :startDate="makePlan[0]" 
+    :endDate="makePlan[makePlan.length - 1]"
     :totalDays="daysNeeded" 
     :totalMishnayos="SumOfMishnayot" 
     :days="dayshe" 
     :masechtos="masechtot"></headers>
-    <p>{{ dateTodayHE }}</p>
-    <h1>
-        שלום {{ name }}
-    </h1>
-    <h2>
-        הנה התכנית שלך ללימוד מסכתות {{ masechtot }}
-    </h2>
-    <h3>
-        תאריך התחלה: {{ hePlan[0] }}
-    </h3>
-    {{ hePlan }}
-    <h3>
-        תאריך סיום: {{ hePlan[hePlan.length - 1] }}
-    </h3>
-    <h3>
-        סה"כ ימי לימוד: {{ daysNeeded }}
-    </h3>
-    <h3>
-        בחרת ללמוד בימים:{{ dayshe }}
-    </h3>
-    <h3>
-        סה"כ משניות: {{ SumOfMishnayot }}
-    </h3>
+    </div>
 </template>
 
 <script>
@@ -1060,7 +1039,6 @@ export default {
             let today = new Date();
             while (dayLeft > 0) {
                 if (this.days[today.getDay() - 1] == true) {
-                    console.log(today);
                     let clonetoday = new Date(today)
 
                     plan.push(clonetoday)
@@ -1068,7 +1046,6 @@ export default {
                 }
                 today.setDate(today.getDate() + 1)
             }
-            console.log(plan);
             this.makeHe(plan)
             return plan
         },
@@ -1076,9 +1053,7 @@ export default {
     },
     mounted() {
         this.getDateTodayHE()
-        // this.makeHe.then((plan) => {
-        //     this.hePlan = plan
-        // })
+        
 
     },
     watch: {
