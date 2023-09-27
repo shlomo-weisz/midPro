@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import {HebrewCalendar, HDate, Location, Event} from '@hebcal/core';
 import headers from './headers.vue'
 import Dayline from './Dayline.vue'
 export default {
@@ -17,7 +17,6 @@ export default {
     components: {
         headers,
         Dayline
-        // Dayline: defineAsyncComponent(() => import('./Dayline.vue'))
     },
     props: {
         masechtot: Array,
@@ -62,8 +61,7 @@ export default {
                 29: 'כט',
                 30: 'ל',
             },
-            // ends: [],
-            // starts: [],
+            
             hebrewDays: {
                 0: 'ראשון',
                 1: 'שני',
@@ -1105,28 +1103,20 @@ export default {
         },
         
         setDaySrart() {
-            console.log(this.sumInDay);
-            console.log(this.masechtotIds);
             let starts = [];
             let ends = [];
             let start = [0, 1, 1];
             let end = [0, 1, 1];
             for (let i of this.sumInDay) {
-                console.log(i + ' ' + start + ' ' + end);
                 let sum = 1;
                 while (sum < i) {
-                    console.log('start loop sum ' + sum);
-                    console.log('start ' + start);
-                    console.log('end ' + end);
+                    
                     let left = i - sum;
-                    console.log('left ' + left);
                     let leftInCurrentChapter = (this.getSumOfMishnayotInPerek(this.masechtotIds[end[0]], end[1]) - end[2]);
-                    console.log('leftInCurrentChapter ' + leftInCurrentChapter);
                     if (left <= leftInCurrentChapter) {
                         end[2] += left;
                         sum += left;
-                        console.log('end ' + end);
-                        console.log('sum ' + sum);
+                        
                         break;
                     }
                     else {
@@ -1148,10 +1138,8 @@ export default {
                 }
                 let start1 = [...start];
                 let end1 = [...end];
-                console.log('*******before' + start + ' ' + end);
                 start1[0] = this.masechtotIds[start[0]]
                 end1[0] = this.masechtotIds[end[0]]
-                console.log('*******after' + start + ' ' + end);
                 starts.push(start1);
                 ends.push(end1);
                 start = [...end];
@@ -1176,10 +1164,8 @@ export default {
                 res1.push(starts[i], ends[i])
                 res.push(res1)
             }
-            console.log(res[0][0]);
             return res
-            // this.starts = starts;
-            // this.ends = ends;
+            
 
 
         },
@@ -1203,22 +1189,14 @@ export default {
                 }
             }
         },
-        fixFormat(date) {
-            let dateStr = date.toLocaleDateString("en-GB");
-            let DataStr = `${dateStr[6]}${dateStr[7]}${dateStr[8]}${dateStr[9]}&gm=${dateStr[3]}${dateStr[4]}&gd=${dateStr[0]}${dateStr[1]}`;
-            return DataStr
-        },
-        async getDateHE(date) {
-            let datehe = this.fixFormat(date);
-            let url = `https://www.hebcal.com/converter?cfg=json&gy=${datehe}&g2h=1`;
-            let response = await fetch(url);
-            let data = await response.json();
-            let hebDate = data.hebrew;
+        getDateHE(date) {           
+            let hebDate = new HDate(date).renderGematriya();
+            
             return hebDate
         },
-        async getDateTodayHE() {
+        getDateTodayHE() {
             let d = new Date();
-            let datehe = await this.getDateHE(d)
+            let datehe =  this.getDateHE(d)
             this.dateTodayHE = datehe
         },
 
@@ -1234,7 +1212,6 @@ export default {
         },
 
         getSumOfMishnayotInPerek(masechetId, perek) {
-            console.log(masechetId + ' ' + perek);
             return this.mishnayot[masechetId]['perek' + perek]
         },
 
@@ -1245,102 +1222,19 @@ export default {
             }
             return sum
         },
-        async makeHe(plan) {
+        makeHe(plan) {
             for (let date of plan) {
 
-                this.hePlan.push(await this.getDateHE(date))
+                this.hePlan.push(this.getDateHE(date))
             }
         },
-        // setDaySrart() {
-        //     console.log(this.sumInDay);
-        //     console.log(this.masechtotIds);
-        //     let starts = [];
-        //     let ends = [];
-        //     let start = [0, 1, 1];
-        //     let end = [0, 1, 1];
-        //     for (let i of this.sumInDay) {
-        //         console.log(i + ' ' + start + ' ' + end);
-        //         let sum = 1;
-        //         while (sum < i) {
-        //             console.log('start loop sum ' + sum);
-        //             console.log('start ' + start);
-        //             console.log('end ' + end);
-        //             let left = i - sum;
-        //             console.log('left ' + left);
-        //             let leftInCurrentChapter = (this.getSumOfMishnayotInPerek(this.masechtotIds[end[0]], end[1]) - end[2]);
-        //             console.log('leftInCurrentChapter ' + leftInCurrentChapter);
-        //             if (left <= leftInCurrentChapter) {
-        //                 end[2] += left;
-        //                 sum += left;
-        //                 console.log('end ' + end);
-        //                 console.log('sum ' + sum);
-        //                 break;
-        //             }
-        //             else {
-
-        //                 sum += leftInCurrentChapter + 1
-        //                 if (this.getSumOfPrakim(this.masechtotIds[end[0]]) > end[1]) {
-        //                     end[1]++
-        //                     end[2] = 1
-        //                 }
-        //                 else {
-        //                     end[0]++
-        //                     end[1] = 1
-        //                     end[2] = 1
-        //                 }
-
-        //             }
-
-
-        //         }
-        //         let start1 = [...start];
-        //         let end1 = [...end];
-        //         console.log('*******before' + start + ' ' + end);
-        //         start1[0] = this.masechtotIds[start[0]]
-        //         end1[0] = this.masechtotIds[end[0]]
-        //         console.log('*******after' + start + ' ' + end);
-        //         starts.push(start1);
-        //         ends.push(end1);
-        //         start = [...end];
-        //         if (this.getSumOfMishnayotInPerek(this.masechtotIds[end[0]], end[1]) - end[2] != 0) {
-        //             start[2]++
-        //         }
-        //         else if (this.getSumOfPrakim(this.masechtotIds[end[0]]) - end[1] != 0) {
-        //             start[1]++
-        //             start[2] = 1
-        //         }
-        //         else {
-        //             start[0]++
-        //             start[1] = 1
-        //             start[2] = 1
-        //         }
-        //         end = [...start];
-
-        //     }
-        //     let res = [];
-        //     for (let i = 0; i < starts.length; i++) {
-        //         let res1 = [];
-        //         res1.push(starts[i], ends[i])
-        //         res.push(res1)
-        //     }
-        //     return res
-        //     // this.starts = starts;
-        //     // this.ends = ends;
-
-
-        // },
+     
         formtHe(path) {
-
-            console.log(path);
-            console.log(path[0]);
-            console.log(path[1]);
-            console.log(path[2]);
             let res = [];
             let massecet = this.shas.massechtot[path[0]].hebrewName;
             let perek = this.abHebrew[path[1]];
             let mishna = this.abHebrew[path[2]];
             res.push(massecet, perek, mishna)
-            console.log(res);
             return res
         }
 

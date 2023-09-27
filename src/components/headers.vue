@@ -22,6 +22,8 @@
     </div>
 </template>
 <script>
+import {HebrewCalendar, HDate, Location, Event} from '@hebcal/core';
+
 export default {
     name: 'header',
     props: {
@@ -48,24 +50,11 @@ export default {
     mounted() {
         this.setHeDate();
     },
-    methods: {
-        fixFormat(date) {
-            let dateStr = date.toLocaleDateString("en-GB");
-            let DataStr = `${dateStr[6]}${dateStr[7]}${dateStr[8]}${dateStr[9]}&gm=${dateStr[3]}${dateStr[4]}&gd=${dateStr[0]}${dateStr[1]}`;
-            return DataStr
-        },
-        async getDateHE(date) {
-            let datehe = this.fixFormat(date);
-            let url = `https://www.hebcal.com/converter?cfg=json&gy=${datehe}&g2h=1`;
-            let response = await fetch(url);
-            let data = await response.json();
-            let hebDate = data.hebrew;
-            return hebDate
-        },
-        async setHeDate() {
-            let hebDate = await this.getDateHE(this.startDate);
+    methods: {       
+        setHeDate() {
+            let hebDate = new HDate(this.startDate).renderGematriya();    
             this.hestartDate = hebDate;
-            hebDate = await this.getDateHE(this.endDate);
+            hebDate = new HDate(this.endDate).renderGematriya();
             this.heendDate = hebDate;
         },
 
