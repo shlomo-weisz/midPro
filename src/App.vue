@@ -52,7 +52,7 @@
 
     <div class="form-line">
       <label for="limit">הגבלת מספר המשניות לכל יום (אופציונלי)</label>
-      <select type="text" id="limit" :disabled="thereIsDuration" v-model="limit">
+      <select  id="limit" :disabled="thereIsDuration" v-model="limit">
         <option value="0" default>ללא הגבלה</option>
         <option value="1">1</option>
         <option value="2">2</option>
@@ -96,10 +96,11 @@
 
 
 <script>
+import { defineAsyncComponent } from 'vue'
 import newTable from './components/newTable.vue'
 import VueMultiselect from 'vue-multiselect'
 export default {
-  components: { VueMultiselect, newTable },
+  components: { VueMultiselect, newTable},  //: defineAsyncComponent(() => import('./components/newTable.vue')) },
   name: 'App',
   data() {
     return {

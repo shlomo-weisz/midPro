@@ -13,6 +13,8 @@
         </div>
         <div class="third">
             <p>מתאריך {{ hestartDate }} עד {{ heendDate }}</p>
+        </div>
+        <div class="fourth">
             <p>סה"כ {{ totalMishnayos }} משניות במשך {{ totalDays }} ימי לימוד</p>
 
         </div>
@@ -40,6 +42,9 @@ export default {
 
         }
     },
+    computed: {
+
+    },
     mounted() {
         this.setHeDate();
     },
@@ -55,16 +60,13 @@ export default {
             let response = await fetch(url);
             let data = await response.json();
             let hebDate = data.hebrew;
-            console.log(hebDate + " from getDateHE");
             return hebDate
         },
         async setHeDate() {
             let hebDate = await this.getDateHE(this.startDate);
             this.hestartDate = hebDate;
-            console.log(this.startDate + " from setHeDate");
             hebDate = await this.getDateHE(this.endDate);
             this.heendDate = hebDate;
-            console.log(this.endDate + " from setHeDate");
         },
 
     }
@@ -81,7 +83,6 @@ export default {
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
-    width: 80%;
     height: 100%;
     font-family: 'Times New Roman', Times, serif;
     font-size: 1.2em;
@@ -120,6 +121,20 @@ export default {
 }
 
 .third {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+    color: #000000;
+}
+.fourth {
     display: flex;
     flex-direction: row-reverse;
     flex-wrap: wrap;
