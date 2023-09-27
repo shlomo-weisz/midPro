@@ -230,5 +230,6 @@ export default {
 }
 .daysLine {
   width: 100%;
+  flex-wrap: wrap;
 }
 </style>
