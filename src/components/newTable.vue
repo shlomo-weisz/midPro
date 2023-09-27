@@ -1,5 +1,8 @@
 <template>
-    <div class="mainDiv">
+    <div class="load" v-if="!show">
+    ...טוען
+    </div>
+    <div class="mainDiv" v-if="show">
         <headers :name="name" :currentDate="dateTodayHE" :startDate="makePlan[0]" :endDate="makePlan[makePlan.length - 1]"
             :totalDays="sumInDay.length" :totalMishnayos="SumOfMishnayot" :days="daysInHe" :masechtos="SelectedSorted"></headers>
     
@@ -28,6 +31,7 @@ export default {
     },
     data() {
         return {
+            show: false,
             hePlan: [],
             abHebrew: {
                 1: 'א',
@@ -1173,6 +1177,9 @@ export default {
     },
     mounted() {
         this.getDateTodayHE();
+        setTimeout(() => {
+            this.show = true
+        }, 1000);
 
 
     },
@@ -1249,5 +1256,10 @@ export default {
     justify-content: center;
     width: 100%;
     margin-top: 20px;
+}
+.load{
+    font-size: 50px;
+    color: #3f51b5;
+    margin-top: 50px;
 }
 </style>
