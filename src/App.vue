@@ -15,7 +15,7 @@
     <div class="form-line">
       <label for="date">ימי לימוד:</label>
     </div>
-    <div class="form-line">
+    <div class="form-line daysLine">
       <div class="days-box">
         <label for="all"> {{ chooseAll }}</label>
         <input type="checkbox" id="all" value="all" v-model="daysAll">
@@ -228,5 +228,7 @@ export default {
   align-items: center;
   
 }
-
+.daysLine {
+  width: 100%;
+}
 </style>

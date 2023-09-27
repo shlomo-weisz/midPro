@@ -84,6 +84,7 @@ export default {
     padding: 10px;
     margin: 10px;
     height: 100%;
+    
     font-family: 'Times New Roman', Times, serif;
     font-size: 1.2em;
     font-weight: bold;

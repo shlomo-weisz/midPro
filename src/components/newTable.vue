@@ -1,7 +1,7 @@
 <template>
     <div class="mainDiv">
         <headers :name="name" :currentDate="dateTodayHE" :startDate="makePlan[0]" :endDate="makePlan[makePlan.length - 1]"
-            :totalDays="daysNeeded" :totalMishnayos="SumOfMishnayot" :days="daysInHe" :masechtos="SelectedSorted"></headers>
+            :totalDays="sumInDay.length" :totalMishnayos="SumOfMishnayot" :days="daysInHe" :masechtos="SelectedSorted"></headers>
     
         <Dayline v-for="(date, index) of hePlan" :key="index" :date="date" :start="formtHe(setDaySrart[index][0])"
             :end="formtHe(setDaySrart[index][1])" :mishnayotPerDay="sumInDay[index]" :day="hebrewDays[makePlan[index].getDay()]"></Dayline>
@@ -1067,10 +1067,28 @@ export default {
 
         },
         mishnayotPerDay() {
-            return Math.floor(this.SumOfMishnayot / this.daysNeeded)
+            return Math.ceil(this.SumOfMishnayot / this.daysNeeded)
+        },
+        sumInDay() {
+            let total = this.SumOfMishnayot;
+            let perDay = this.mishnayotPerDay;
+            let days = this.daysNeeded;
+            let sumInDay = [];
+            let i = 1;
+            while (i < days && total > perDay) {
+                sumInDay.push(perDay)
+                total -= perDay
+                i++
+            }
+            sumInDay.push(total)
+            this.daysNeeded = sumInDay.length
+            return sumInDay
+        },
+        SelectedSorted() {
+            return this.masechtot.sort((a, b) => this.findIdOfMasechet(a) - this.findIdOfMasechet(b));
         },
         makePlan() {
-            let dayLeft = this.daysNeeded;
+            let dayLeft = this.sumInDay.length;
             let plan = [];
             let today = new Date();
             while (dayLeft > 0) {
@@ -1085,21 +1103,7 @@ export default {
             this.makeHe(plan)
             return plan
         },
-        sumInDay() {
-            let total = this.SumOfMishnayot;
-            let perDay = this.mishnayotPerDay;
-            let days = this.daysNeeded;
-            let sumInDay = [];
-            for (let i = 1; i < days; i++) {
-                sumInDay.push(perDay)
-                total -= perDay
-            }
-            sumInDay.push(total)
-            return sumInDay
-        },
-        SelectedSorted() {
-            return this.masechtot.sort((a, b) => this.findIdOfMasechet(a) - this.findIdOfMasechet(b));
-        },
+        
         setDaySrart() {
             console.log(this.sumInDay);
             console.log(this.masechtotIds);
@@ -1349,6 +1353,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100%;
     margin-top: 20px;
 }
 </style>
