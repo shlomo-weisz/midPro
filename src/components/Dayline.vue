@@ -1,5 +1,4 @@
 <template>
-    <div id="row">
         <div class="dayline">
             <div class="dayline-header">
                 <p> יום {{ day }} </p>
@@ -13,13 +12,13 @@
                 <p>עד </p>
                 &nbsp
                 <p>"{{ end[0] + ' פרק ' + end[1] + ' משנה ' + end[2] }}"</p>
-                
-            </div><div class="sum">
-                    <p>משניות ליום: {{ mishnayotPerDay }}</p>
-                </div>
+
+            </div>
+            <div class="sum">
+                <p>משניות ליום: {{ mishnayotPerDay }}</p>
+            </div>
         </div>
 
-    </div>
 </template>
 <script>
 export default {
@@ -71,6 +70,7 @@ export default {
     padding: 5px;
     background-color: #f5f5f5;
 }
+
 .sum {
     display: flex;
     flex-direction: row-reverse;

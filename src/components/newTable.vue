@@ -1090,7 +1090,7 @@ export default {
         makePlan() {
             let dayLeft = this.sumInDay.length;
             let plan = [];
-            let today = new Date();
+            let today = new Date(this.date);
             while (dayLeft > 0) {
                 if (this.days[today.getDay() - 1] == true) {
                     let clonetoday = new Date(today)
