@@ -1,7 +1,7 @@
 <template>
 	<div class="mainDiv">
 		<headers :name="name" :currentDate="dateTodayHE" :startDate="makePlan[0]" :endDate="makePlan[makePlan.length - 1]"
-			:totalDays="sumInDay.length" :totalMishnayos="SumOfMishnayot" :days="daysInHe" :masechtos="SelectedSorted">
+			:totalDays="sumInDay.length" :totalMishnayos="SumOfMishnayot" :days="daysInHe" :masechtos="MasechtotUpdate">
 		</headers>
 
 		<Dayline v-for="(date, index) of hePlan" :key="index" :date="date" :start="formtHe(setDaySrart[index][0])"
@@ -22,6 +22,7 @@ export default {
 	},
 	props: {
 		masechtot: Array,
+		sdorimShlemim: Array,
 		date: String,
 		name: String,
 		days: Array,
@@ -1005,7 +1006,8 @@ export default {
 					perek3: 12
 				}
 
-			}
+			},
+			hebrewSdorim: ["זרעים", "מועד", "נשים", "נזיקין", "קדשים", "טהרות"],
 
 
 
@@ -1026,7 +1028,7 @@ export default {
 		masechtotIds() {
 			let massectotids = [];
 			for (let masechet of this.masechtot) {
-				if (masechet === "כל הש\"ס") {
+				if (masechet === "כל השס") {
 					return Object.keys(this.shas.massechtot)
 				}
 				else if (masechet === "זרעים") {
@@ -1063,11 +1065,36 @@ export default {
 					massectotids.push(this.findIdOfMasechet(masechet))
 				}
 			}
+			console.log(massectotids);
 			return massectotids.sort((a, b) => a - b)
+		},
+		MasechtotUpdate() {
+			let sdorim = [];
+			for (let i = 0; i < 6; i++) {
+				if (this.sdorimShlemim[i] == true) {
+					sdorim.push(this.hebrewSdorim[i])
+				}
+			}
+			if (sdorim.length == 6) {
+				return ["כל השס"]
+			}
+			let masechtotTemp = [];
+			for (let masechet of this.masechtot) {
+				console.log(masechet);
+				if (this.sdorimShlemim[this.shas.massechtot[this.findIdOfMasechet(masechet)].seder - 1] != true) {
+					masechtotTemp.push(masechet)
+				}
+
+			}
+			masechtotTemp.sort((a, b) => this.findIdOfMasechet(a) - this.findIdOfMasechet(b));
+			return sdorim.concat(masechtotTemp)
+
+
 		},
 		SumOfMishnayot() {
 			let sum = 0;
 			for (let masechetId of this.masechtotIds) {
+				console.log(masechetId);
 				sum += this.getSumOfMishnayot(masechetId)
 
 			}
@@ -1286,4 +1313,5 @@ export default {
 	justify-content: center;
 	width: 100%;
 	margin-top: 20px;
-}</style>
+}
+</style>
