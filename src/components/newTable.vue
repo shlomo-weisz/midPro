@@ -5,7 +5,7 @@
 		</headers>
 
 		<div class="actions no-print">
-			<button class="print-btn" @click="printPdf">הורד PDF</button>
+			<button class="print-btn" @click="printPdf"><bdi dir="rtl">ייצוא ל‑<bdi dir="ltr">PDF</bdi></bdi></button>
 		</div>
 
 		<div class="table-wrapper">
