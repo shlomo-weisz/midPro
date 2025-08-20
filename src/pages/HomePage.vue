@@ -150,7 +150,7 @@
 
 			</form>
 		</div>
-		<button v-show="showTable" @click="showTable = !showTable">לעריכת המסלול</button>
+		<button class="no-print" v-show="showTable" @click="showTable = !showTable">לעריכת המסלול</button>
 		<newTable v-if="showTable" :sdorimShlemim="sdorimShlemim" :masechtot="selected" :date="date" :name="name"
 			:days="days" :limit="limit" :duration="duration"></newTable>
 	</div>
@@ -559,5 +559,9 @@ button {
 	padding: 10px;
 	border: 3px solid #ccc;
 	border-radius: 5px;
+}
+
+@media print {
+	.no-print { display: none !important; }
 }
 </style>

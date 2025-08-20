@@ -4,9 +4,36 @@
 			:totalDays="sumInDay.length" :totalMishnayos="SumOfMishnayot" :days="daysInHe" :masechtos="MasechtotUpdate">
 		</headers>
 
-		<Dayline v-for="(date, index) of hePlan" :key="index" :date="date" :start="formtHe(setDaySrart[index][0])"
-			:end="formtHe(setDaySrart[index][1])" :mishnayotPerDay="sumInDay[index]"
-			:day="hebrewDays[makePlan[index].getDay()]"></Dayline>
+		<div class="actions no-print">
+			<button class="print-btn" @click="printPdf">הורד PDF</button>
+		</div>
+
+		<div class="table-wrapper">
+			<table class="schedule-table" dir="rtl">
+				<thead>
+					<tr>
+						<th>יום</th>
+						<th>תאריך</th>
+						<th>מ־</th>
+						<th>עד</th>
+						<th>משניות ליום</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(date, index) in hePlan" :key="index">
+						<td class="col-day">{{ hebrewDays[makePlan[index].getDay()] }}</td>
+						<td class="col-date">{{ date }}</td>
+						<td class="col-from">
+							{{ formtHe(setDaySrart[index][0])[0] }} פרק {{ formtHe(setDaySrart[index][0])[1] }} משנה {{ formtHe(setDaySrart[index][0])[2] }}
+						</td>
+						<td class="col-to">
+							{{ formtHe(setDaySrart[index][1])[0] }} פרק {{ formtHe(setDaySrart[index][1])[1] }} משנה {{ formtHe(setDaySrart[index][1])[2] }}
+						</td>
+						<td class="col-count">{{ sumInDay[index] }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </template>
 
@@ -1245,6 +1272,9 @@ export default {
 	},
 
 	methods: {
+		printPdf() {
+			window.print();
+		},
 		findIdOfMasechet(masechet) {
 			for (let id in this.shas.massechtot) {
 
@@ -1313,5 +1343,62 @@ export default {
 	justify-content: center;
 	width: 100%;
 	margin-top: 20px;
+}
+
+.actions {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	margin: 12px 0;
+}
+
+.print-btn {
+	background-color: #0d6efd;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 8px 14px;
+	cursor: pointer;
+	font-size: 14px;
+}
+
+
+.table-wrapper { width: 100%; }
+.schedule-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-size: 14px;
+	color: #222;
+	background: #fff;
+	border: 1px solid #ccc;
+}
+.schedule-table thead th {
+	background: #f2f5f8;
+	border-bottom: 2px solid #bbb;
+	padding: 10px 8px;
+	text-align: center;
+}
+.schedule-table tbody td {
+	border-top: 1px solid #e2e6ea;
+	padding: 10px 8px;
+}
+.schedule-table tbody tr:nth-child(even) td { background: #fafbfc; }
+.col-day, .col-date, .col-count { text-align: center; white-space: nowrap; }
+.col-from, .col-to { width: 35%; }
+
+/* Improve header spacing vs. table */
+.actions { margin: 16px 0; }
+
+@media print {
+	.no-print { display: none !important; }
+	.mainDiv { margin-top: 0; }
+	.schedule-table { font-size: 12px; border: 1px solid #000; }
+	.schedule-table thead th { background: #e9ecef !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+	.schedule-table tbody td { border-top: 1px solid #000; }
+	.schedule-table tr { break-inside: avoid; page-break-inside: avoid; }
+	/* Optional: cleaner print */
+	:root { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+	@page { size: A4; margin: 12mm; }
 }
 </style>
