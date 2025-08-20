@@ -9,8 +9,18 @@
 					<input type="text" id="name" v-model="name" />
 				</div>
 				<div class="form-line">
-					<label for="date">תאריך התחלה:</label>
-					<input type="date" id="date" v-model="date" :min="currentDate" />
+					<label>תאריך התחלה (עברי):</label>
+					<div class="heb-date">
+						<select v-model.number="hebDay" aria-label="יום עברי">
+							<option v-for="opt in daysHebOptions" :key="`d-${opt.value}`" :value="opt.value">{{ opt.label }}</option>
+						</select>
+						<select v-model.number="hebMonth" aria-label="חודש עברי">
+							<option v-for="m in hebMonths" :key="`m-${m.value}`" :value="m.value">{{ m.label }}</option>
+						</select>
+						<select v-model.number="hebYear" aria-label="שנה עברית" class="year-select">
+							<option v-for="opt in hebYearOptions" :key="`y-${opt.value}`" :value="opt.value">{{ opt.label }}</option>
+						</select>
+					</div>
 				</div>
 				<div class="form-line">
 					<label>ימי לימוד:</label>
@@ -104,7 +114,7 @@
 				</div>
 				<div class="btn">
 					<div class="form-line">
-						<button type="button">נקה טופס</button>
+						<button type="button" @click="resetForm">נקה טופס</button>
 					</div>
 					<div class="form-line">
 						<button type="submit">צור טבלה</button>
@@ -122,6 +132,7 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
+import { HDate } from '@hebcal/core'
 import newTable from '../components/newTable.vue'
 import VueMultiselect from 'vue-multiselect'
 export default {
@@ -139,6 +150,9 @@ export default {
 			chooseAll: 'בחר הכול',
 			name: '',
 			date: '',
+			hebDay: null,
+			hebMonth: null,
+			hebYear: null,
 			days: [false, false, false, false, false, false, false],
 			selected: [],
 			selectedZeroim: [],
@@ -175,7 +189,62 @@ export default {
 			const formattedDate = `${year}-${month}-${day}`;
 			return formattedDate;
 
-		}
+		},
+		isHebLeap() {
+			return this.hebYear ? this.isHebLeapYear(this.hebYear) : false;
+		},
+		hebMonths() {
+			const base = [
+				{ value: 1, label: 'ניסן' },
+				{ value: 2, label: 'אייר' },
+				{ value: 3, label: 'סיון' },
+				{ value: 4, label: 'תמוז' },
+				{ value: 5, label: 'אב' },
+				{ value: 6, label: 'אלול' },
+				{ value: 7, label: 'תשרי' },
+				{ value: 8, label: 'חשון' },
+				{ value: 9, label: 'כסלו' },
+				{ value: 10, label: 'טבת' },
+				{ value: 11, label: 'שבט' },
+			];
+			if (this.isHebLeap) {
+				base.push({ value: 12, label: "אדר א'" }, { value: 13, label: "אדר ב'" });
+			} else {
+				base.push({ value: 12, label: 'אדר' });
+			}
+			return base;
+		},
+		daysInHebMonth() {
+			if (!this.hebMonth || !this.hebYear) return 30;
+			try {
+				const d = new HDate(1, this.hebMonth, this.hebYear);
+				return d.daysInMonth();
+			} catch (e) {
+				return 30;
+			}
+		},
+		daysHebOptions() {
+			// Build 1..daysInHebMonth, label in Hebrew letters (א, ב, ...)
+			const n = this.daysInHebMonth || 30;
+			const out = [];
+			for (let i = 1; i <= n; i++) out.push({ value: i, label: this.toHebNum(i) });
+			return out;
+		},
+		hebYearOptions() {
+			// starting current Hebrew year, then next 9 years
+			try {
+				const todayHd = new HDate(new Date());
+				const start = todayHd.getFullYear();
+				const years = Array.from({ length: 10 }, (_, k) => start + k);
+				return years.map(y => ({ value: y, label: this.toHebYear(y) }));
+			} catch {
+				const y = 5785;
+				return Array.from({ length: 10 }, (_, k) => y + k).map(v => ({ value: v, label: this.toHebYear(v) }));
+			}
+		},
+	},
+	mounted() {
+		this.initHebDateToday();
 	},
 	watch: {
 		daysAll() {
@@ -291,9 +360,17 @@ export default {
 				this.shasSelected = false
 			}
 		},
-
-
-
+		hebMonth() {
+			if (this.hebDay && this.hebDay > this.daysInHebMonth) this.hebDay = this.daysInHebMonth;
+		},
+		hebYear() {
+			if (this.hebDay && this.hebDay > this.daysInHebMonth) this.hebDay = this.daysInHebMonth;
+			// collapse Adar II to Adar when switching to non-leap year
+			if (!this.isHebLeap && this.hebMonth && this.hebMonth > 12) {
+				this.hebMonth = 12;
+				if (this.hebDay && this.hebDay > this.daysInHebMonth) this.hebDay = this.daysInHebMonth;
+			}
+		},
 		selectedZeroim() {
 			if (this.selectedZeroim.length === this.zeroim.length) {
 				this.zeroimSelected = true
@@ -342,6 +419,24 @@ export default {
 
 	},
 	methods: {
+		resetForm() {
+			// Reset basic fields
+			this.name = '';
+			this.daysAll = false;
+			this.chooseAll = 'בחר הכול';
+			this.days = [false, false, false, false, false, false, false];
+			this.limit = null;
+			this.duration = null;
+			this.thereIsLimit = false;
+			this.thereIsDuration = false;
+			// Reset masechtot and related checkboxes
+			this.clearAll();
+			// Hide table and clear date
+			this.showTable = false;
+			this.date = '';
+			// Reset Hebrew date to today for a valid default
+			this.initHebDateToday();
+		},
 		clearAll() {
 			this.selected = []
 			this.selectedZeroim = []
@@ -395,30 +490,96 @@ export default {
 			console.log(this.sdorimShlemim);
 
 		},
+		hebrewToIso() {
+			try {
+				if (!this.hebDay || !this.hebMonth || !this.hebYear) return '';
+				const hd = new HDate(this.hebDay, this.hebMonth, this.hebYear);
+				const g = hd.greg();
+				const y = g.getFullYear();
+				const m = String(g.getMonth() + 1).padStart(2, '0');
+				const d = String(g.getDate()).padStart(2, '0');
+				return `${y}-${m}-${d}`;
+			} catch (e) {
+				return '';
+			}
+		},
+		initHebDateToday() {
+			try {
+				const todayHd = new HDate(new Date());
+				this.hebDay = todayHd.getDate();
+				this.hebMonth = todayHd.getMonth();
+				this.hebYear = todayHd.getFullYear();
+			} catch (e) {
+				// leave as nulls
+			}
+		},
 		creatNewTable() {
+			// override existing to inject Hebrew date
+			// ...existing code before validations...
 			this.checkBox();
 			if (this.name === '') {
 				alert('יש להכניס שם לטבלה')
-			} else if (this.date === '') {
-				alert('יש להכניס תאריך התחלה')
-			} else if (this.selectedZeroim.length === 0 && this.selectedMoadim.length === 0 && this.selectedNashim.length === 0 && this.selectedNezikin.length === 0 && this.selectedKodashim.length === 0 && this.selectedTaharot.length === 0) {
+			} else {
+				const iso = this.hebrewToIso();
+				if (!iso) {
+					alert('יש לבחור תאריך עברי תקין');
+					return;
+				}
+				this.date = iso;
+			}
+			// continue with existing validations
+			if (this.selectedZeroim.length === 0 && this.selectedMoadim.length === 0 && this.selectedNashim.length === 0 && this.selectedNezikin.length === 0 && this.selectedKodashim.length === 0 && this.selectedTaharot.length === 0) {
 				alert('יש לבחור מסכתות')
 			} else if (this.days[0] === false && this.days[1] === false && this.days[2] === false && this.days[3] === false && this.days[4] === false && this.days[5] === false && this.days[6] === false) {
 				alert('יש לבחור ימי לימוד')
-			}
-			else {
+			} else {
 				if (this.shasSelected)
 					this.selected = ["כל השס"]
-				// else if (this.zeroimSelected && this.moadimSelected && this.nashimSelected && this.nezikinSelected && this.kodashimSelected && this.taharotSelected)
-				// 	this.selected = ["כל השס"]
 				else {
 					this.selected = []
 					this.selected = this.selected.concat(this.selectedZeroim, this.selectedMoadim, this.selectedNashim, this.selectedNezikin, this.selectedKodashim, this.selectedTaharot)
 				}
 				this.showTable = true
 			}
-		}
-
+		},
+		toHebNum(num) {
+			// 1..30 into Hebrew letters (א..ל); for >30 fallback to gematriya via @hebcal/core if desired
+			const map = ['','א','ב','ג','ד','ה','ו','ז','ח','ט','י','יא','יב','יג','יד','טו','טז','יז','יח','יט','כ','כא','כב','כג','כד','כה','כו','כז','כח','כט','ל'];
+			if (num >= 1 && num <= 30) return map[num];
+			try {
+				// fallback using @hebcal/core gematriya if available
+				// HDate.gematriya isn't exposed here; simple approximation for tens/hundreds
+				return String(num);
+			} catch { return String(num); }
+		},
+		toHebYear(year) {
+			// Render Hebrew year as proper gematria (e.g., תשפ"ה for 5785)
+			try {
+				let n = year % 1000; // omit thousands (ה׳)
+				const letters = [];
+				const hundreds = [400, 300, 200, 100];
+				const hLet = { 400: 'ת', 300: 'ש', 200: 'ר', 100: 'ק' };
+				for (const h of hundreds) { while (n >= h) { letters.push(hLet[h]); n -= h; } }
+				const tens = [90, 80, 70, 60, 50, 40, 30, 20, 10];
+				const tLet = { 90: 'צ', 80: 'פ', 70: 'ע', 60: 'ס', 50: 'נ', 40: 'מ', 30: 'ל', 20: 'כ', 10: 'י' };
+				for (const t of tens) { while (n >= t) { letters.push(tLet[t]); n -= t; } }
+				if (n === 15) { letters.push('ט', 'ו'); n = 0; }
+				else if (n === 16) { letters.push('ט', 'ז'); n = 0; }
+				else {
+					const uLet = { 9: 'ט', 8: 'ח', 7: 'ז', 6: 'ו', 5: 'ה', 4: 'ד', 3: 'ג', 2: 'ב', 1: 'א' };
+					if (n > 0) letters.push(uLet[n] || '');
+				}
+				if (letters.length === 0) return 'א׳';
+				if (letters.length === 1) return `${letters[0]}׳`;
+				const last = letters.pop();
+				return `${letters.join('')}״${last}`;
+			} catch { return String(year); }
+		},
+		isHebLeapYear(y) {
+			// Hebrew leap years in 19-year cycle: 3,6,8,11,14,17,19
+			const r = y % 19;
+			return r === 0 || r === 3 || r === 6 || r === 8 || r === 11 || r === 14 || r === 17;
+		},
 	}
 }
 
@@ -610,6 +771,10 @@ select {
 	/* RTL-friendly */
 }
 
+/* Hebrew date inline selects: content-based width and a wider year */
+.heb-date select { width: auto; max-width: none; }
+.heb-date .year-select { min-width: 180px; }
+
 label {
 	min-width: 120px;
 	color: #111827;
@@ -704,5 +869,11 @@ label {
 		box-shadow: none;
 		border: 1px solid #000;
 	}
+}
+
+.heb-date {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 </style>

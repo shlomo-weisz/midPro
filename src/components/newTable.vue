@@ -1189,9 +1189,13 @@ export default {
 		makePlan() {
 			let dayLeft = this.sumInDay.length;
 			let plan = [];
-			let today = new Date(this.date);
+			// Parse YYYY-MM-DD safely to local date (avoid TZ shift)
+			let parts = String(this.date).split('-');
+			let today = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
 			while (dayLeft > 0) {
-				if (this.days[today.getDay() - 1] == true) {
+				// Map JS getDay(): 0=Sunday..6=Saturday to our days[0..6] where 0=Sunday
+				const idx = today.getDay();
+				if (this.days[idx] === true) {
 					let clonetoday = new Date(today)
 
 					plan.push(clonetoday)
@@ -1353,7 +1357,8 @@ export default {
 	justify-content: center;
 	width: 100%;
 	margin-top: 20px;
-	padding: 0 16px; /* symmetric side padding */
+	padding: 0 16px;
+	/* symmetric side padding */
 }
 
 .actions {
@@ -1377,7 +1382,8 @@ export default {
 .table-wrapper {
 	width: 100%;
 	max-width: 1200px;
-	margin: 0 auto; /* center table area */
+	margin: 0 auto;
+	/* center table area */
 }
 
 .schedule-table {
@@ -1410,8 +1416,10 @@ export default {
 .schedule-table td.col-from,
 .schedule-table td.col-to {
 	text-align: right;
-	word-break: keep-all; /* keep words intact in Hebrew */
-	overflow-wrap: anywhere; /* allow breaking if absolutely needed */
+	word-break: keep-all;
+	/* keep words intact in Hebrew */
+	overflow-wrap: anywhere;
+	/* allow breaking if absolutely needed */
 }
 
 .schedule-table tbody tr:nth-child(even) td {
@@ -1429,11 +1437,30 @@ export default {
 }
 
 /* Let colgroup define widths; just set reasonable min-widths to protect labels */
-.schedule-table th.col-day, .schedule-table td.col-day { min-width: 70px; }
-.schedule-table th.col-date, .schedule-table td.col-date { min-width: 100px; }
-.schedule-table th.col-from, .schedule-table td.col-from { min-width: 180px; }
-.schedule-table th.col-to, .schedule-table td.col-to { min-width: 180px; }
-.schedule-table th.col-count, .schedule-table td.col-count { min-width: 60px; }
+.schedule-table th.col-day,
+.schedule-table td.col-day {
+	min-width: 70px;
+}
+
+.schedule-table th.col-date,
+.schedule-table td.col-date {
+	min-width: 100px;
+}
+
+.schedule-table th.col-from,
+.schedule-table td.col-from {
+	min-width: 180px;
+}
+
+.schedule-table th.col-to,
+.schedule-table td.col-to {
+	min-width: 180px;
+}
+
+.schedule-table th.col-count,
+.schedule-table td.col-count {
+	min-width: 60px;
+}
 
 /* Improve header spacing vs. table */
 .actions {

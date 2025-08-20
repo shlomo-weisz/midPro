@@ -90,7 +90,8 @@ export default {
 	border: 1px solid #dbe5ea;
 	border-radius: 12px;
 	padding: 12px 16px;
-	margin: 10px auto; /* center within parent */
+	margin: 10px auto;
+	/* center within parent */
 	max-width: 1200px;
 	box-sizing: border-box;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
