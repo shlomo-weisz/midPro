@@ -1,7 +1,8 @@
 <template>
 	<div class="mainDiv">
-		<headers :name="name" :currentDate="dateTodayHE" :startDate="makePlan[0]" :endDate="makePlan[makePlan.length - 1]"
-			:totalDays="sumInDay.length" :totalMishnayos="SumOfMishnayot" :days="daysInHe" :masechtos="MasechtotUpdate">
+		<headers :name="name" :currentDate="dateTodayHE" :startDate="makePlan[0]"
+			:endDate="makePlan[makePlan.length - 1]" :totalDays="sumInDay.length" :totalMishnayos="SumOfMishnayot"
+			:days="daysInHe" :masechtos="MasechtotUpdate">
 		</headers>
 
 		<div class="actions no-print">
@@ -10,13 +11,20 @@
 
 		<div class="table-wrapper">
 			<table class="schedule-table" dir="rtl">
+				<colgroup>
+					<col style="width: 10%" />
+					<col style="width: 15%" />
+					<col style="width: 32.5%" />
+					<col style="width: 32.5%" />
+					<col style="width: 10%" />
+				</colgroup>
 				<thead>
 					<tr>
-						<th>יום</th>
-						<th>תאריך</th>
-						<th>מ־</th>
-						<th>עד</th>
-						<th>משניות ליום</th>
+						<th class="col-day">יום</th>
+						<th class="col-date">תאריך</th>
+						<th class="col-from">מ־</th>
+						<th class="col-to">עד</th>
+						<th class="col-count">משניות ליום</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -24,10 +32,12 @@
 						<td class="col-day">{{ hebrewDays[makePlan[index].getDay()] }}</td>
 						<td class="col-date">{{ date }}</td>
 						<td class="col-from">
-							{{ formtHe(setDaySrart[index][0])[0] }} פרק {{ formtHe(setDaySrart[index][0])[1] }} משנה {{ formtHe(setDaySrart[index][0])[2] }}
+							{{ formtHe(setDaySrart[index][0])[0] }} פרק {{ formtHe(setDaySrart[index][0])[1] }} משנה {{
+								formtHe(setDaySrart[index][0])[2] }}
 						</td>
 						<td class="col-to">
-							{{ formtHe(setDaySrart[index][1])[0] }} פרק {{ formtHe(setDaySrart[index][1])[1] }} משנה {{ formtHe(setDaySrart[index][1])[2] }}
+							{{ formtHe(setDaySrart[index][1])[0] }} פרק {{ formtHe(setDaySrart[index][1])[1] }} משנה {{
+								formtHe(setDaySrart[index][1])[2] }}
 						</td>
 						<td class="col-count">{{ sumInDay[index] }}</td>
 					</tr>
@@ -1343,6 +1353,7 @@ export default {
 	justify-content: center;
 	width: 100%;
 	margin-top: 20px;
+	padding: 0 16px; /* symmetric side padding */
 }
 
 .actions {
@@ -1363,42 +1374,110 @@ export default {
 }
 
 
-.table-wrapper { width: 100%; }
+.table-wrapper {
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto; /* center table area */
+}
+
 .schedule-table {
 	width: 100%;
 	border-collapse: collapse;
+	table-layout: fixed;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	font-size: 14px;
 	color: #222;
 	background: #fff;
 	border: 1px solid #ccc;
 }
+
 .schedule-table thead th {
 	background: #f2f5f8;
 	border-bottom: 2px solid #bbb;
 	padding: 10px 8px;
 	text-align: center;
+	box-sizing: border-box;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
+
 .schedule-table tbody td {
 	border-top: 1px solid #e2e6ea;
 	padding: 10px 8px;
 }
-.schedule-table tbody tr:nth-child(even) td { background: #fafbfc; }
-.col-day, .col-date, .col-count { text-align: center; white-space: nowrap; }
-.col-from, .col-to { width: 35%; }
+
+.schedule-table td.col-from,
+.schedule-table td.col-to {
+	text-align: right;
+	word-break: keep-all; /* keep words intact in Hebrew */
+	overflow-wrap: anywhere; /* allow breaking if absolutely needed */
+}
+
+.schedule-table tbody tr:nth-child(even) td {
+	background: #fafbfc;
+}
+
+.schedule-table th.col-day,
+.schedule-table th.col-date,
+.schedule-table th.col-count,
+.schedule-table td.col-day,
+.schedule-table td.col-date,
+.schedule-table td.col-count {
+	text-align: center;
+	white-space: nowrap;
+}
+
+/* Let colgroup define widths; just set reasonable min-widths to protect labels */
+.schedule-table th.col-day, .schedule-table td.col-day { min-width: 70px; }
+.schedule-table th.col-date, .schedule-table td.col-date { min-width: 100px; }
+.schedule-table th.col-from, .schedule-table td.col-from { min-width: 180px; }
+.schedule-table th.col-to, .schedule-table td.col-to { min-width: 180px; }
+.schedule-table th.col-count, .schedule-table td.col-count { min-width: 60px; }
 
 /* Improve header spacing vs. table */
-.actions { margin: 16px 0; }
+.actions {
+	margin: 16px 0;
+}
 
 @media print {
-	.no-print { display: none !important; }
-	.mainDiv { margin-top: 0; }
-	.schedule-table { font-size: 12px; border: 1px solid #000; }
-	.schedule-table thead th { background: #e9ecef !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-	.schedule-table tbody td { border-top: 1px solid #000; }
-	.schedule-table tr { break-inside: avoid; page-break-inside: avoid; }
+	.no-print {
+		display: none !important;
+	}
+
+	.mainDiv {
+		margin-top: 0;
+	}
+
+	.schedule-table {
+		font-size: 12px;
+		border: 1px solid #000;
+	}
+
+	.schedule-table thead th {
+		background: #e9ecef !important;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	.schedule-table tbody td {
+		border-top: 1px solid #000;
+	}
+
+	.schedule-table tr {
+		break-inside: avoid;
+		page-break-inside: avoid;
+	}
+
 	/* Optional: cleaner print */
-	:root { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-	@page { size: A4; margin: 12mm; }
+	:root {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	@page {
+		size: A4;
+		margin: 12mm;
+	}
 }
 </style>

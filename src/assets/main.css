@@ -28,8 +28,7 @@ a,
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+  display: block; /* avoid two-column grid that pins content to the left */
+  padding: 0 2rem; /* keep symmetric gutters */
   }
 }

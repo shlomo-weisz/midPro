@@ -1,158 +1,120 @@
 <template>
-	<div class="main">
+	<div class="main" dir="rtl">
 		<div class="formDiv" v-show="!showTable">
-			<form action="">
+			<h2 class="form-title">הגדרות תכנית לימוד</h2>
+			<p class="form-subtitle">בחר ימים, מסכתות ומגבלות — הכל בהיר ופשוט</p>
+			<form @submit.prevent="creatNewTable">
 				<div class="form-line">
 					<label for="name">שם:</label>
-					<input type="text" id="name" v-model="name">
+					<input type="text" id="name" v-model="name" />
 				</div>
-
 				<div class="form-line">
 					<label for="date">תאריך התחלה:</label>
-					<input type="date" id="date" v-model="date" :min="currentDate">
+					<input type="date" id="date" v-model="date" :min="currentDate" />
 				</div>
-
 				<div class="form-line">
-					<label for="date">ימי לימוד:</label>
+					<label>ימי לימוד:</label>
 				</div>
 				<div class="form-line daysLine">
-					<div class="days-box">
-						<label for="all"> {{ chooseAll }}</label>
-						<input type="checkbox" id="all" value="all" v-model="daysAll">
+					<div class="days-box choose-all">
+						<label for="all"><bdi dir="rtl">{{ chooseAll }}</bdi></label>
+						<input type="checkbox" id="all" value="all" v-model="daysAll" />
 					</div>
-					<div class="days-box">
-						<label for="sunday">א</label>
-						<input type="checkbox" id="sunday" value="א" v-model="days[0]">
-					</div>
-					<div class="days-box">
-						<label for="monday">ב</label>
-						<input type="checkbox" id="monday" value="ב" v-model="days[1]">
-					</div>
-					<div class="days-box">
-						<label for="tuesday">ג</label>
-						<input type="checkbox" id="tuesday" value="ג" v-model="days[2]">
-					</div>
-					<div class="days-box">
-						<label for="wednesday">ד</label>
-						<input type="checkbox" id="wednesday" value="ד" v-model="days[3]">
-					</div>
-					<div class="days-box">
-						<label for="thursday">ה</label>
-						<input type="checkbox" id="thursday" value="ה" v-model="days[4]">
-					</div>
-					<div class="days-box">
-						<label for="friday">ו</label>
-						<input type="checkbox" id="friday" value="ו" v-model="days[5]">
-					</div>
-					<div class="days-box">
-						<label for="saturday">ש</label>
-						<input type="checkbox" id="saturday" value="ש" v-model="days[6]">
-					</div>
+					<div class="days-box"><label for="sunday">א</label><input type="checkbox" id="sunday" value="א"
+							v-model="days[0]" /></div>
+					<div class="days-box"><label for="monday">ב</label><input type="checkbox" id="monday" value="ב"
+							v-model="days[1]" /></div>
+					<div class="days-box"><label for="tuesday">ג</label><input type="checkbox" id="tuesday" value="ג"
+							v-model="days[2]" /></div>
+					<div class="days-box"><label for="wednesday">ד</label><input type="checkbox" id="wednesday"
+							value="ד" v-model="days[3]" /></div>
+					<div class="days-box"><label for="thursday">ה</label><input type="checkbox" id="thursday" value="ה"
+							v-model="days[4]" /></div>
+					<div class="days-box"><label for="friday">ו</label><input type="checkbox" id="friday" value="ו"
+							v-model="days[5]" /></div>
+					<div class="days-box"><label for="saturday">ש</label><input type="checkbox" id="saturday" value="ש"
+							v-model="days[6]" /></div>
 				</div>
-
 				<div class="form-line">
 					<label for="limit">הגבלת מספר המשניות לכל יום (אופציונלי)</label>
 					<input id="limit" type="number" min="0" step="1" :disabled="thereIsDuration" v-model.number="limit"
 						placeholder="ללא הגבלה = 0" />
 				</div>
-
 				<div class="form-line">
 					<label for="duration">או בחר מספר ימים למחזור השינון</label>
 					<input type="number" id="duration" min="0" max="365" :disabled="thereIsLimit"
-						v-model.number="duration">
-				</div>
-
-
-				<div class="form-line">
-					<!-- <div>
-						<VueMultiselect v-model="selected" :options="options" :multiple="true">
-						</VueMultiselect>
-					</div> -->
-
+						v-model.number="duration" />
 				</div>
 				<div class="masechtot">
 					<div class="form-line">
 						<div class="seder-box">
-							<label for="shas">כל השס</label>
-							<input type="checkbox" v-model="shasSelected" class="box-masecet" />
+							<div class="seder-header">
+								<label for="shas">כל השס</label>
+								<input type="checkbox" v-model="shasSelected" class="box-masecet" />
+							</div>
 						</div>
 					</div>
 					<div class="form-line sdorim">
 						<div class="seder-box">
-							<label for="shas">זרעים</label>
-							<input type="checkbox" v-model="zeroimSelected" class="box-masecet" />
+							<div class="seder-header"><label>זרעים</label><input type="checkbox"
+									v-model="zeroimSelected" class="box-masecet" /></div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedZeroim" :options="zeroim" :multiple="true">
-								</VueMultiselect>
+								<VueMultiselect v-model="selectedZeroim" :options="zeroim" :multiple="true" />
 							</div>
 						</div>
 						<div class="seder-box">
-							<label for="shas">מועד</label>
-							<input type="checkbox" v-model="moadimSelected" class="box-masecet" />
+							<div class="seder-header"><label>מועד</label><input type="checkbox" v-model="moadimSelected"
+									class="box-masecet" /></div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedMoadim" :options="moadim" :multiple="true">
-								</VueMultiselect>
+								<VueMultiselect v-model="selectedMoadim" :options="moadim" :multiple="true" />
 							</div>
 						</div>
 						<div class="seder-box">
-							<label for="shas">נשים</label>
-							<input type="checkbox" v-model="nashimSelected" class="box-masecet" />
+							<div class="seder-header"><label>נשים</label><input type="checkbox" v-model="nashimSelected"
+									class="box-masecet" /></div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedNashim" :options="nashim" :multiple="true">
-								</VueMultiselect>
+								<VueMultiselect v-model="selectedNashim" :options="nashim" :multiple="true" />
 							</div>
 						</div>
 						<div class="seder-box">
-							<label for="shas">נזיקין</label>
-							<input type="checkbox" v-model="nezikinSelected" class="box-masecet" />
+							<div class="seder-header"><label>נזיקין</label><input type="checkbox"
+									v-model="nezikinSelected" class="box-masecet" /></div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedNezikin" :options="nezikin" :multiple="true">
-								</VueMultiselect>
+								<VueMultiselect v-model="selectedNezikin" :options="nezikin" :multiple="true" />
 							</div>
 						</div>
 						<div class="seder-box">
-							<label for="shas">קדשים</label>
-							<input type="checkbox" v-model="kodashimSelected" class="box-masecet" />
+							<div class="seder-header"><label>קדשים</label><input type="checkbox"
+									v-model="kodashimSelected" class="box-masecet" /></div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedKodashim" :options="kodashim" :multiple="true">
-								</VueMultiselect>
+								<VueMultiselect v-model="selectedKodashim" :options="kodashim" :multiple="true" />
 							</div>
 						</div>
 						<div class="seder-box">
-							<label for="shas">טהרות</label>
-							<input type="checkbox" v-model="taharotSelected" class="box-masecet" />
+							<div class="seder-header"><label>טהרות</label><input type="checkbox"
+									v-model="taharotSelected" class="box-masecet" /></div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedTaharot" :options="taharot" :multiple="true">
-								</VueMultiselect>
+								<VueMultiselect v-model="selectedTaharot" :options="taharot" :multiple="true" />
 							</div>
 						</div>
 					</div>
 					<div class="form-line">
-						<div>
-							<button @click.prevent="clearAll">נקה הכול</button>
-						</div>
+						<div><button @click.prevent="clearAll" type="button">נקה הכול</button></div>
 					</div>
-
-
-
-
-
-
 				</div>
 				<div class="btn">
 					<div class="form-line">
-						<button @click="">נקה טופס</button>
+						<button type="button">נקה טופס</button>
 					</div>
 					<div class="form-line">
-						<button type="submit" @click.prevent="creatNewTable">צור טבלה</button>
+						<button type="submit">צור טבלה</button>
 					</div>
 				</div>
-
 			</form>
 		</div>
 		<button class="no-print" v-show="showTable" @click="showTable = !showTable">לעריכת המסלול</button>
 		<newTable v-if="showTable" :sdorimShlemim="sdorimShlemim" :masechtot="selected" :date="date" :name="name"
-			:days="days" :limit="limit" :duration="duration"></newTable>
+			:days="days" :limit="limit" :duration="duration" />
 	</div>
 </template>
 
@@ -174,7 +136,7 @@ export default {
 			thereIsDuration: false,
 			labelName: ':שם',
 			daysAll: false,
-			chooseAll: ' :בחר הכול',
+			chooseAll: 'בחר הכול',
 			name: '',
 			date: '',
 			days: [false, false, false, false, false, false, false],
@@ -223,7 +185,7 @@ export default {
 
 			} else {
 				this.days = [false, false, false, false, false, false, false]
-				this.chooseAll = ' :בחר הכול'
+				this.chooseAll = 'בחר הכול'
 			}
 		},
 		limit() {
@@ -467,9 +429,32 @@ export default {
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
 <style scoped>
+/* Ensure predictable sizing and no overflow surprises */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+.form-title {
+	margin: 0 0 4px;
+	font-size: 1.35rem;
+	font-weight: 700;
+	color: #111827;
+	text-align: center;
+}
+
+.form-subtitle {
+	margin: 0 0 10px;
+	font-size: 0.95rem;
+	color: #6b7280;
+	text-align: center;
+}
+
 .form-line {
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
+	/* with RTL container, items render right-to-left naturally */
 	justify-content: center;
 	align-items: center;
 	margin-bottom: 10px;
@@ -478,34 +463,47 @@ export default {
 
 .sdorim {
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	justify-content: center;
 	align-items: center;
+	flex-wrap: wrap;
 	margin-bottom: 10px;
 }
 
 .days-box {
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	margin: 10px;
-	padding: 10px;
-	border: 3px solid #ccc;
-	border-radius: 5px;
+	margin: 6px;
+	padding: 6px 10px;
+	border: 1px solid #e5e7eb;
+	border-radius: 999px;
+	background: #fff;
+}
+
+.choose-all {
+	background: #eef6ff;
+	border-color: #cfe3ff;
 }
 
 .formDiv {
 	display: flex;
 	width: 100%;
+	max-width: 1000px;
+	direction: rtl;
 	flex-direction: column;
 	justify-content: center;
-	align-items: center;
-	background-color: rgb(36, 184, 204);
-	margin: 10px;
-	padding: 10px;
-	border: 9px solid #1b1313;
-	border-radius: 5px;
+	align-items: stretch;
+	background: #f7fbfd;
+	/* light tint */
+	margin: 16px auto;
+	padding: 18px 20px;
+	border: 1px solid #dbe5ea;
+	border-radius: 12px;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+	overflow: hidden;
+	/* prevent children from spilling out */
 }
 
 .main {
@@ -527,9 +525,31 @@ export default {
 	justify-content: center;
 	align-items: center;
 	margin: 10px;
-	padding: 10px;
-	border: 3px solid #ccc;
-	border-radius: 5px;
+	padding: 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	background: #f8fafc;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+	flex: 1 1 300px;
+	/* responsive wrapping */
+	max-width: 100%;
+}
+
+.seder-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	justify-content: flex-start;
+}
+
+.seder-header label {
+	margin: 0;
+}
+
+.seder-header .box-masecet {
+	width: 18px;
+	height: 18px;
 }
 
 .masechtot {
@@ -537,10 +557,11 @@ export default {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	margin: 10px;
-	padding: 10px;
-	border: 9px solid #1b1313;
-	border-radius: 5px;
+	margin: 10px 0;
+	padding: 12px 8px;
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	background: #ffffff;
 }
 
 .btn {
@@ -548,20 +569,140 @@ export default {
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	margin: 10px;
-	padding: 10px;
-	border: 9px solid #171d01;
-	border-radius: 5px;
+	gap: 12px;
+	margin: 12px 0 0;
+	padding: 8px 0 0;
 }
 
 button {
-	margin: 10px;
-	padding: 10px;
-	border: 3px solid #ccc;
-	border-radius: 5px;
+	margin: 0;
+	padding: 10px 16px;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	background: #0d6efd;
+	color: #fff;
+	cursor: pointer;
+	transition: all .15s ease-in-out;
+}
+
+button:hover {
+	background: #0b5ed7;
+}
+
+button:disabled {
+	opacity: .6;
+	cursor: not-allowed;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="date"],
+input[type="number"],
+select {
+	width: 100%;
+	max-width: 420px;
+	padding: 10px 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	background: #fff;
+	color: #111827;
+	text-align: right;
+	/* RTL-friendly */
+}
+
+label {
+	min-width: 120px;
+	color: #111827;
+	font-weight: 600;
+}
+
+/* Days */
+.daysLine {
+	width: 100%;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.days-box input {
+	width: 18px;
+	height: 18px;
+	margin-right: 8px;
+}
+
+.days-box label {
+	min-width: auto;
+	margin: 0 0 0 6px;
+	font-weight: 600;
+}
+
+.choose-all label {
+	direction: rtl !important;
+	unicode-bidi: isolate-override;
+}
+
+/* Multiselect width tuning */
+.seder {
+	width: 100%;
+}
+
+.seder :deep(.multiselect) {
+	width: 100%;
+	min-width: 220px;
+	direction: rtl;
+	text-align: right;
+}
+
+.seder :deep(.multiselect__tags) {
+	border-radius: 8px;
+	border-color: #e5e7eb;
+	direction: rtl;
+	text-align: right;
+}
+
+.seder :deep(.multiselect__content) {
+	direction: rtl;
+	text-align: right;
+}
+
+.seder :deep(.multiselect__tags) {
+	border-radius: 8px;
+	border-color: #e5e7eb;
+}
+
+.seder :deep(.multiselect__option--highlight) {
+	background: #0d6efd;
+}
+
+/* Sections spacing */
+.masechtot .form-line {
+	margin: 8px 6px;
+}
+
+/* Small screens: stack label above input to avoid overflow */
+@media (max-width: 640px) {
+	.form-line {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	label {
+		margin-bottom: 6px;
+	}
 }
 
 @media print {
-	.no-print { display: none !important; }
+	.no-print {
+		display: none !important;
+	}
+
+	.form-title,
+	.form-subtitle {
+		display: none;
+	}
+
+	.formDiv {
+		box-shadow: none;
+		border: 1px solid #000;
+	}
 }
 </style>
