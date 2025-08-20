@@ -52,24 +52,14 @@
 
 				<div class="form-line">
 					<label for="limit">הגבלת מספר המשניות לכל יום (אופציונלי)</label>
-					<select id="limit" :disabled="thereIsDuration" v-model="limit">
-						<option value="0" default>ללא הגבלה</option>
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="5">5</option>
-						<option value="10">10</option>
-						<option value="20">20</option>
-						<option value="30">30</option>
-						<option value="50">50</option>
-						<option value="100">100</option>
-						<option value="200">200</option>
-						<option value="500">500</option>
-					</select>
+					<input id="limit" type="number" min="0" step="1" :disabled="thereIsDuration" v-model.number="limit"
+						placeholder="ללא הגבלה = 0" />
 				</div>
 
 				<div class="form-line">
 					<label for="duration">או בחר מספר ימים למחזור השינון</label>
-					<input type="text" id="duration" min="0" max="365" :disabled="thereIsLimit" v-model="duration">
+					<input type="number" id="duration" min="0" max="365" :disabled="thereIsLimit"
+						v-model.number="duration">
 				</div>
 
 
@@ -178,9 +168,9 @@ export default {
 	data() {
 		return {
 			showTable: false,
-			limit: 0,
+			limit: null,
 			thereIsLimit: false,
-			duration: "",
+			duration: null,
 			thereIsDuration: false,
 			labelName: ':שם',
 			daysAll: false,
@@ -398,6 +388,8 @@ export default {
 			this.selectedNezikin = []
 			this.selectedKodashim = []
 			this.selectedTaharot = []
+			this.limit = null
+			this.duration = null
 			this.zeroimSelected = false
 			this.moadimSelected = false
 			this.nashimSelected = false
@@ -405,6 +397,8 @@ export default {
 			this.kodashimSelected = false
 			this.taharotSelected = false
 			this.shasSelected = false
+			this.thereIsLimit = false
+			this.thereIsDuration = false
 			this.sdorimShlemim = [false, false, false, false, false, false]
 
 		},
@@ -548,6 +542,7 @@ export default {
 	border: 9px solid #1b1313;
 	border-radius: 5px;
 }
+
 .btn {
 	display: flex;
 	flex-direction: row;
@@ -558,6 +553,7 @@ export default {
 	border: 9px solid #171d01;
 	border-radius: 5px;
 }
+
 button {
 	margin: 10px;
 	padding: 10px;
