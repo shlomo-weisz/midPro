@@ -7,6 +7,7 @@
 
 		<div class="actions no-print">
 			<button class="print-btn" @click="printPdf"><bdi dir="rtl">ייצוא ל‑<bdi dir="ltr">PDF</bdi></bdi></button>
+			<button class="excel-btn" @click="exportToExcel"><bdi dir="rtl">ייצוא ל‑Excel</bdi></button>
 		</div>
 
 		<div class="table-wrapper">
@@ -49,6 +50,7 @@
 
 <script>
 import { HebrewCalendar, HDate, Location, Event } from '@hebcal/core';
+import * as XLSX from 'xlsx';
 import headers from './headers.vue'
 import Dayline from './Dayline.vue'
 export default {
@@ -1046,8 +1048,6 @@ export default {
 			},
 			hebrewSdorim: ["זרעים", "מועד", "נשים", "נזיקין", "קדשים", "טהרות"],
 
-
-
 		}
 	},
 	computed:
@@ -1344,8 +1344,51 @@ export default {
 			let mishna = this.abHebrew[path[2]];
 			res.push(massecet, perek, mishna)
 			return res
-		}
+		},
+		exportToExcel() {
+			// Build a 2D array representing the table (logical order)
+			const header = ['יום', 'תאריך', 'מ־', 'עד', 'משניות ליום'];
+			const rows = this.hePlan.map((date, index) => {
+				const dayName = this.hebrewDays[this.makePlan[index].getDay()];
+				const from = `${this.formtHe(this.setDaySrart[index][0])[0]} פרק ${this.formtHe(this.setDaySrart[index][0])[1]} משנה ${this.formtHe(this.setDaySrart[index][0])[2]}`;
+				const to = `${this.formtHe(this.setDaySrart[index][1])[0]} פרק ${this.formtHe(this.setDaySrart[index][1])[1]} משנה ${this.formtHe(this.setDaySrart[index][1])[2]}`;
+				return [dayName, date, from, to, this.sumInDay[index]];
+			});
 
+			const data = [header, ...rows];
+			const ws = XLSX.utils.aoa_to_sheet(data);
+
+			// Request Right-To-Left sheet UI and right alignment
+			ws['!rtl'] = true; // flip sheet view so Column A is on the right in Excel
+
+			// Column widths (in characters) roughly matching the colgroup
+			ws['!cols'] = [
+				{ wch: 8 },   // יום
+				{ wch: 18 },  // תאריך
+				{ wch: 32 },  // מ־
+				{ wch: 32 },  // עד
+				{ wch: 12 },  // משניות ליום
+			];
+
+			// Apply right alignment for Hebrew columns
+			const range = XLSX.utils.decode_range(ws['!ref']);
+			for (let C = range.s.c; C <= range.e.c; ++C) {
+				for (let R = range.s.r; R <= range.e.r; ++R) {
+					const addr = XLSX.utils.encode_cell({ r: R, c: C });
+					if (!ws[addr]) continue;
+					if (!ws[addr].s) ws[addr].s = {};
+					ws[addr].s.alignment = { horizontal: 'right' };
+				}
+			}
+
+			const wb = XLSX.utils.book_new();
+			// Ensure the entire workbook opens in RTL (Excel UI places Column A on the right)
+			wb.Workbook = wb.Workbook || {};
+			wb.Workbook.Views = [{ RTL: true }];
+
+			XLSX.utils.book_append_sheet(wb, ws, 'תכנית');
+			XLSX.writeFile(wb, `משניות_${this.name || 'ללא_שם'}.xlsx`);
+		}
 	}
 }
 </script>
@@ -1365,6 +1408,7 @@ export default {
 	width: 100%;
 	display: flex;
 	justify-content: center;
+	gap: 8px;
 	margin: 12px 0;
 }
 
@@ -1378,6 +1422,15 @@ export default {
 	font-size: 14px;
 }
 
+.excel-btn {
+	background-color: #198754;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 8px 14px;
+	cursor: pointer;
+	font-size: 14px;
+}
 
 .table-wrapper {
 	width: 100%;

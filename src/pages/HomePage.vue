@@ -12,13 +12,15 @@
 					<label>תאריך התחלה (עברי):</label>
 					<div class="heb-date">
 						<select v-model.number="hebDay" aria-label="יום עברי">
-							<option v-for="opt in daysHebOptions" :key="`d-${opt.value}`" :value="opt.value">{{ opt.label }}</option>
+							<option v-for="opt in daysHebOptions" :key="`d-${opt.value}`" :value="opt.value">{{
+								opt.label }}</option>
 						</select>
 						<select v-model.number="hebMonth" aria-label="חודש עברי">
 							<option v-for="m in hebMonths" :key="`m-${m.value}`" :value="m.value">{{ m.label }}</option>
 						</select>
 						<select v-model.number="hebYear" aria-label="שנה עברית" class="year-select">
-							<option v-for="opt in hebYearOptions" :key="`y-${opt.value}`" :value="opt.value">{{ opt.label }}</option>
+							<option v-for="opt in hebYearOptions" :key="`y-${opt.value}`" :value="opt.value">{{
+								opt.label }}</option>
 						</select>
 					</div>
 				</div>
@@ -544,7 +546,7 @@ export default {
 		},
 		toHebNum(num) {
 			// 1..30 into Hebrew letters (א..ל); for >30 fallback to gematriya via @hebcal/core if desired
-			const map = ['','א','ב','ג','ד','ה','ו','ז','ח','ט','י','יא','יב','יג','יד','טו','טז','יז','יח','יט','כ','כא','כב','כג','כד','כה','כו','כז','כח','כט','ל'];
+			const map = ['', 'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י', 'יא', 'יב', 'יג', 'יד', 'טו', 'טז', 'יז', 'יח', 'יט', 'כ', 'כא', 'כב', 'כג', 'כד', 'כה', 'כו', 'כז', 'כח', 'כט', 'ל'];
 			if (num >= 1 && num <= 30) return map[num];
 			try {
 				// fallback using @hebcal/core gematriya if available
@@ -772,8 +774,14 @@ select {
 }
 
 /* Hebrew date inline selects: content-based width and a wider year */
-.heb-date select { width: auto; max-width: none; }
-.heb-date .year-select { min-width: 180px; }
+.heb-date select {
+	width: auto;
+	max-width: none;
+}
+
+.heb-date .year-select {
+	min-width: 180px;
+}
 
 label {
 	min-width: 120px;
@@ -872,8 +880,8 @@ label {
 }
 
 .heb-date {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+	display: flex;
+	gap: 8px;
+	align-items: center;
 }
 </style>
