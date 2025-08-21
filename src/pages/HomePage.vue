@@ -69,44 +69,56 @@
 					<div class="form-line sdorim">
 						<div class="seder-box">
 							<div class="seder-header"><label>זרעים</label><input type="checkbox"
-									v-model="zeroimSelected" class="box-masecet" /></div>
+									v-model="zeroimSelected" class="box-masecet" title="סמן כדי לבחור את כל הסדר" />
+								<span class="seder-hint">סמן כדי לבחור את כל הסדר</span>
+							</div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedZeroim" :options="zeroim" :multiple="true" />
+								<VueMultiselect v-model="selectedZeroim" :options="zeroim" :multiple="true" placeholder="לחץ כאן כדי לבחור מסכתות מסויימות" select-label="לחץ כדי להוסיף" deselect-label="לחץ כדי להסיר" selected-label="נבחר" />
 							</div>
 						</div>
 						<div class="seder-box">
 							<div class="seder-header"><label>מועד</label><input type="checkbox" v-model="moadimSelected"
-									class="box-masecet" /></div>
+									class="box-masecet" title="סמן כדי לבחור את כל הסדר" />
+								<span class="seder-hint">סמן כדי לבחור את כל הסדר</span>
+							</div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedMoadim" :options="moadim" :multiple="true" />
+								<VueMultiselect v-model="selectedMoadim" :options="moadim" :multiple="true" placeholder="לחץ כאן כדי לבחור מסכתות מסויימות" select-label="לחץ כדי להוסיף" deselect-label="לחץ כדי להסיר" selected-label="נבחר" />
 							</div>
 						</div>
 						<div class="seder-box">
 							<div class="seder-header"><label>נשים</label><input type="checkbox" v-model="nashimSelected"
-									class="box-masecet" /></div>
+									class="box-masecet" title="סמן כדי לבחור את כל הסדר" />
+								<span class="seder-hint">סמן כדי לבחור את כל הסדר</span>
+							</div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedNashim" :options="nashim" :multiple="true" />
+								<VueMultiselect v-model="selectedNashim" :options="nashim" :multiple="true" placeholder="לחץ כאן כדי לבחור מסכתות מסויימות" select-label="לחץ כדי להוסיף" deselect-label="לחץ כדי להסיר" selected-label="נבחר" />
 							</div>
 						</div>
 						<div class="seder-box">
 							<div class="seder-header"><label>נזיקין</label><input type="checkbox"
-									v-model="nezikinSelected" class="box-masecet" /></div>
+									v-model="nezikinSelected" class="box-masecet" title="סמן כדי לבחור את כל הסדר" />
+								<span class="seder-hint">סמן כדי לבחור את כל הסדר</span>
+							</div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedNezikin" :options="nezikin" :multiple="true" />
+								<VueMultiselect v-model="selectedNezikin" :options="nezikin" :multiple="true" placeholder="לחץ כאן כדי לבחור מסכתות מסויימות" select-label="לחץ כדי להוסיף" deselect-label="לחץ כדי להסיר" selected-label="נבחר" />
 							</div>
 						</div>
 						<div class="seder-box">
 							<div class="seder-header"><label>קדשים</label><input type="checkbox"
-									v-model="kodashimSelected" class="box-masecet" /></div>
+									v-model="kodashimSelected" class="box-masecet" title="סמן כדי לבחור את כל הסדר" />
+								<span class="seder-hint">סמן כדי לבחור את כל הסדר</span>
+							</div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedKodashim" :options="kodashim" :multiple="true" />
+								<VueMultiselect v-model="selectedKodashim" :options="kodashim" :multiple="true" placeholder="לחץ כאן כדי לבחור מסכתות מסויימות" select-label="לחץ כדי להוסיף" deselect-label="לחץ כדי להסיר" selected-label="נבחר" />
 							</div>
 						</div>
 						<div class="seder-box">
 							<div class="seder-header"><label>טהרות</label><input type="checkbox"
-									v-model="taharotSelected" class="box-masecet" /></div>
+									v-model="taharotSelected" class="box-masecet" title="סמן כדי לבחור את כל הסדר" />
+								<span class="seder-hint">סמן כדי לבחור את כל הסדר</span>
+							</div>
 							<div class="seder">
-								<VueMultiselect v-model="selectedTaharot" :options="taharot" :multiple="true" />
+								<VueMultiselect v-model="selectedTaharot" :options="taharot" :multiple="true" placeholder="לחץ כאן כדי לבחור מסכתות מסויימות" select-label="לחץ כדי להוסיף" deselect-label="לחץ כדי להסיר" selected-label="נבחר" />
 							</div>
 						</div>
 					</div>
@@ -713,6 +725,12 @@ export default {
 .seder-header .box-masecet {
 	width: 18px;
 	height: 18px;
+}
+
+/* New: small helper text next to checkbox */
+.seder-hint {
+	font-size: 0.8rem;
+	color: #6b7280;
 }
 
 .masechtot {
